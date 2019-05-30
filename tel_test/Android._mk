@@ -1,0 +1,28 @@
+LOCAL_PATH:= $(call my-dir)
+#dial phone support library
+include $(CLEAR_VARS)
+
+LOCAL_C_INCLUDES += AppClient.h \
+                   $(TOP)/vendor/zib/common  \
+                   ls_telephony.h \
+		           ls_telephony_util.h \
+		           zib_dial_test.h \
+		           zib_key.h
+LOCAL_SRC_FILES:= \
+    zib_dial_test.cpp  \
+    AppClient.cpp  \
+    ls_telephony_util.cpp  \
+    ls_mediaplay_util.cpp  \
+    zb_dailtest_demo.cpp
+
+
+LOCAL_SHARED_LIBRARIES := \
+                 libbinder \
+                 libutils \
+                 libcutils \
+                 libmedia  \
+                 libzibcommon
+
+LOCAL_MODULE:= zb_dailcall
+LOCAL_MODULE_TAGS := optional
+include $(BUILD_EXECUTABLE)
