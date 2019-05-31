@@ -16,7 +16,10 @@
 #include "zib_dial_test.h"
 #include "zib_gsensor_test.h"
 #include "zib_key.h"
-#include <cstdio>
+#include "zib_bluetooth.h"
+#include <media/AudioSystem.h>
+#include <system/audio.h>
+using namespace android;
 
 int main(int argc, char *argv[]) {
 
@@ -24,53 +27,77 @@ int main(int argc, char *argv[]) {
 
     if (argc < 2) {
         fprintf(stderr,
-                "Usage: %s [-g] gsensor test  \n  [-w] wifi test \n [-bt] bluethood\n [-m]mic test\n [-k] key test\n [-gps_test] gps_test test \n ",
+                "Usage: %s \n [-g] gsensor test  \n [-w] wifi test \n [-bt] bluethood\n [-m]mic test\n [-k] key test\n [-gps_test] gps_test test \n ",
                 argv[0]);
         return 1;
     }
     /* parse command line arguments */
-    argv += 2;
+    printf("step1  \n");
+
     int ret = -1;
-    while (*argv) {
-        if (strcmp(*argv, "-g")) {
-            argv++;
-            ret = zib_gsensor_test();
-            printf("gsensor status ret=%d  \n ",ret);
-            DBGMSG("gsensor status ret=%d  \n ",ret);
-            if (ret) {
-                zib_audio_play_by_name(ZIB_FACTORY_GSENSOR_PASS);
-            } else {
-                zib_audio_play_by_name(ZIB_FACTORY_GSENSOR_FAIL);
+    while (++argv, --argc) {
+        if (**argv == '-' || **argv == '/') {
+            char *p;
+            printf("step2 argv %s \n", *argv);
+            if (strcmp(*argv, "g") == 0) {
+                zib_audio_play_by_name(ZIB_FACTORY_GSENSOR_START);
+                ret = zib_gsensor_test();
+                printf("gsensor status test_ret=%d  \n ", ret);
+                DBGMSG("gsensor status test_ret=%d  \n ", ret);
+                if (ret) {
+                    zib_audio_play_by_name(ZIB_FACTORY_GSENSOR_PASS);
+                } else {
+                    zib_audio_play_by_name(ZIB_FACTORY_GSENSOR_FAIL);
+                }
+                break;
+            } else if (strcmp(*argv, "w") == 0) {
+
+                ret = wifi_test();
+                printf("wifi test result test_ret=%d  \n ", ret);
+                DBGMSG("wifi test result test_ret=%d  \n ", ret);
+                if (ret) {
+                    zib_audio_play_by_name(ZIB_FACTORY_WIFI_PASS);
+                } else {
+                    zib_audio_play_by_name(ZIB_FACTORY_WIFI_FAIL);
+                }
+                break;
+            } else if (strcmp(*argv, "k") == 0) {
+
+//               test_ret=key_test.key_test();
+                break;
+            } else if (strcmp(*argv, "-bt")==0) {
+                ret = zb_bluetooth_test();
+                if (ret) {
+                    zib_audio_play_by_name(ZIB_FACTORY_BT_PASS);
+                } else {
+                    zib_audio_play_by_name(ZIB_FACTORY_BT_FAIL);
+                }
+                break;
+            } else if (strcmp(*argv, "-gps")==0) {
+                ret = test_gps_start();
+                if (ret == 0) {
+                    zib_audio_play_by_name(ZIB_FACTORY_GPS_SIGNAL_PASS);
+                } else {
+                    zib_audio_play_by_name(ZIB_FACTORY_GPS_SIGNAL_FAIL);
+                }
+                break;
+            } else if (strcmp(*argv, "-t")==0) {
+                ret = tel_test();
+                printf("telephone test result test_ret=%d  \n ", ret);
+                DBGMSG("telephone test result test_ret=%d  \n ", ret)
+                break;
+            }else if(strcmp(*argv,"-s")==0){
+                printf("step3");
+                if(argc>=2){
+                    argv++;
+                    int sound=15;
+                    if (*argv) sound= atoi(*argv);
+                    AudioSystem::setStreamVolumeIndex(AUDIO_STREAM_MUSIC, random()*15, AUDIO_DEVICE_OUT_SPEAKER);
+                }
+                break;
             }
-
-        } else if (strcmp(*argv, "-w")) {
-            argv++;
-            ret= wifi_test();
-            printf("wifi test result ret=%d  \n ",ret);
-            DBGMSG("wifi test result ret=%d  \n ",ret);
-            if(ret){
-                zib_audio_play_by_name(ZIB_FACTORY_WIFI_PASS);
-            }else{
-                zib_audio_play_by_name(ZIB_FACTORY_WIFI_FAIL);
-            }
-
-        } else if (strcmp(*argv, "-k")) {
-            argv++;
-//               ret=key_test.key_test();
-        } else if (strcmp(*argv, "-b")) {
-            argv++;
-
-        } else if (strcmp(*argv, "-gps")) {
-            argv++;
-            ret = test_gps_start();
-
-
-        }else if(strcmp(*argv,"-t")){
-            argv++;
-           ret= tel_test();
-            printf("telephone test result ret=%d  \n ",ret);
-            DBGMSG("telephone test result ret=%d  \n ",ret);
         }
+
     }
 }
 

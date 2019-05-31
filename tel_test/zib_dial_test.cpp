@@ -177,13 +177,15 @@ void getSimStatus_test() {
 
 void airplaneMode_test() {
     DBGMSG("start");
+    char   *atCmd="AT+SFUN=5";
 
     char closePS[256] = {0};
-    ls_api_sendAT("AT+SFUN=5", &closePS[0]);
+    ls_api_sendAT(atCmd, &closePS[0]);
     printf("close procol stack = %s\n", closePS);
     sleep(10);
     char openPS[256] = {0};
-    ls_api_sendAT("AT+SFUN=4", &openPS[0]);
+    atCmd="AT+SFUN=4";
+    ls_api_sendAT(atCmd, &openPS[0]);
     DBGMSG("open procol stack = %s\n ", openPS);
     printf("open procol stack = %s\n", openPS);
 
@@ -242,7 +244,7 @@ void *zb_dial_test1(void *arg) {
     getSimStatus_test();
     //send_sms_test();
 
-//     int ret =dial_test("112");
+//     int test_ret =dial_test("112");
     //airplaneMode_test();
 
     while (1) {

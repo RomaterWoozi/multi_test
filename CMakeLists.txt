@@ -11,8 +11,7 @@ include_directories(../factorytest/includes)
 
 set(HEADER_INCLUDE
         includes/main.h
-        includes/wifi_bt_test.h
-
+        includes/zib_wifi_bt.h
         includes/commm_util.h
         ../factorytest/includes/type.h
         )
@@ -28,7 +27,9 @@ add_executable(
         ${TEL_TEST_SRCES}
         includes/zib_key.h
         includes/zib_bluetooth.h
-        ls_wifi_test.c
+        includes/wifi_bt_test.h
+        zib_wifi_test.c
+        multil_utils.c
         bt_test/zib_bluetooth_test.c
         mic_test/mic_test.cpp
         key_app.cpp

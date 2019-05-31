@@ -45,28 +45,57 @@ typedef void (t_console_cmd_handler) (char *p);
 
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 int get_discovery_state_changed_status();
+
 int get_device_find_status();
+
 void do_enable(char *p);
+
 void do_pair(char *p);
+
 void do_start_discovery();
+
 void do_stop_discovery();
+
 void do_disable(char *p);
+
 void do_btgattc_register_app();
+
 void do_btgattc_unregister_app();
+
 void do_btgatts_start_advertise();
+
 void do_btgatts_init_server();
+
 void do_btgatts_send_notification();
+
 void do_help(char *p);
+
 void do_quit(char *p);
+
 void setup_test_env(void);
+
 void bdt_log(const char *fmt_str, ...);
+
 void config_permissions(void);
+
 int HAL_load(void);
+
 void bdt_init(void);
+
 void gatt_init(void);
+
 void process_cmd(char *p, unsigned char is_job);
+
 int HAL_unload(void);
-int bluethood_test();
+
+int zb_bluetooth_test();
+
+#ifdef __cplusplus
+}
+#endif

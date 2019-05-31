@@ -10,6 +10,7 @@
 #include <time.h>
 #include <pthread.h>
 #include <type.h>
+#include <wifi_bt_test.h>
 #include "zib_asensor_test.h"
 #include "commm_util.h"
 #include "main.h"
@@ -54,18 +55,20 @@ static int asensor_check(float datas)
     return ret;
 
 #else
-    int ret = -1;
+    int test_ret = -1;
 	float start_1 = SPRD_ASENSOR_1G-SPRD_ASENSOR_OFFSET;
 	float start_2 = -SPRD_ASENSOR_1G+SPRD_ASENSOR_OFFSET;
 
 	if( ((start_1<datas) || (start_2>datas)) ){
-		ret = 0;
+		test_ret = 0;
 	}
 
-	return ret;
+	return test_ret;
 
 #endif
 }
+
+
 
 static void *asensor_thread()
 {
@@ -165,10 +168,10 @@ int test_asensor_start(void)
         }
         pthread_create(&thread, NULL, (void*)asensor_thread, NULL);
         pthread_join(thread, NULL); /* wait "handle key" thread exit. */
-        if(RL_PASS == asensor_thread){
+        if(RL_PASS == asensor_result){
                     LOGD("test g_sensor RL_PASS");
         }
-        else if(RL_FAIL == asensor_thread){
+        else if(RL_FAIL == asensor_result){
                     LOGD("test g_sensor RL_FAIL");
         }else{
 
@@ -188,13 +191,13 @@ int test_asensor_start(void)
 
 int sprd_gsensor_xyz(int *x, int *y, int *z)
 {
-    int nwr, ret, fd, err=0;
+    int nwr=0, ret, fd, err=0;
     char value[20];
     uint32_t ulenable = 0;
     fd = open(SPRD_GSENSOR_DEV, O_RDONLY);
     if(fd < 0)
     {
-        printf("open %s fail\r\n", SPRD_GSENSOR_STEP);
+        printf("open %d fail\r\n", SPRD_GSENSOR_STEP);
         return errno;
     }
 
@@ -221,9 +224,9 @@ int zib_gsensor_test()
     int x,y,z;
     int ret=sprd_gsensor_xyz(&x,&y,&z);
     if(ret){
-        DBGMSG("get data success x = %, y  =%,  z=%",x,y,z);
+        DBGMSG("get data success x = %d, y  =%d,  z=%d",x,y,z);
     } else{
-        DBGMSG("get data fail x = %, y  =%,  z=%",x,y,z);
+        DBGMSG("get data fail x = %d, y  =%d,  z=%d",x,y,z);
     }
     return 1;
 }

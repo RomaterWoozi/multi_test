@@ -5,7 +5,7 @@ extern int main_done;
 /*******************************************************************************
  ** Console commands
  *******************************************************************************/
-int bluethood_test()
+int zb_bluetooth_test()
 {
 
     config_permissions();
@@ -36,13 +36,9 @@ int bluethood_test()
             break;
         }
     }
-
-    /* FIXME: Commenting this out as for some reason, the application does not exit otherwise*/
-    //bdt_cleanup();
-
     HAL_unload();
 
     ZIB_DBG("****Bluetooth Test app terminating****");
 
-    return 0;
+    return get_device_find_status();
 }

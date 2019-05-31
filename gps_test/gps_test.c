@@ -498,7 +498,7 @@ int create_dir(const char *sPathName) {
     for (i = 1; i < len; i++) {
         if (DirName[i] == '/') {
             DirName[i] = 0;
-            if (access(DirName, NULL) != 0) {
+            if (access(DirName, 06) != 0) {
                 if (mkdir(DirName, 0755) == -1) {
                     perror("mkdir   error");
                     return -1;

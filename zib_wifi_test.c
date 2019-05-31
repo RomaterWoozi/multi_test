@@ -4,38 +4,12 @@
 #include <pthread.h>
 #include "type.h"
 #include "includes/main.h"
-
+#include "zib_wifi.h"
+#include "zib_wifi_bt.h"
 // enable or disable local debug
 
 
-// 定义扫描固定SSID的信号强度
-#define FACTORY_ZIB_WIFI_SSID   "zib"
-#define FACTORY_ZIB_SIG_LEVEL   (-80)  
 
-/******************wifi*************/
-typedef struct wifi_ap_t {
-    char smac[32]; // string mac
-    char name[64]; //wifi name
-    int  sig_level;
-    int frequency;
-}wifi_ap_t;
-
-#define WIFI_STATUS_UNKNOWN     0x0001
-#define WIFI_STATUS_OPENED      0x0002
-#define WIFI_STATUS_SCANNING    0x0004
-#define WIFI_STATUS_SCAN_END    0x0008
-
-#define WIFI_CMD_RETRY_NUM      3
-#define WIFI_CMD_RETRY_TIME     1 // second
-#define DISABLED_DHCP_FAILURE       2
-#define DISABLED_UNKNOWN_REASON     0
-#define DISABLED_AUTH_FAILURE       3
-#define CONNECTED                   5
-#define CONNECTING                  6
-#define DISABLED_ASSOCIATION_REJECT 4
-#define WIFI_MAX_AP             20
-#define EVT_MAX_LEN 127
-/******************wifi end*************/
 
 
 static int             sConnectStatus= 0;
@@ -779,8 +753,7 @@ int wifiAddNetwork( char * ssid, char * psk )
 
 
 int wifi_Connect_Network(int netId){
-    FUN_ENTER;
-    AT_ASSERT( netId != NULL );
+    FUN_ENTER
 
     sConnectStatus = CONNECTING;
     char reply[64];
@@ -842,7 +815,7 @@ int wifi_Connect_Network(int netId){
     if(retryNum == 0){
         return DISABLED_DHCP_FAILURE;
     }
-    FUN_EXIT;
+    FUN_EXIT
     return CONNECTED;
 }
 
@@ -873,7 +846,7 @@ int get_wifi_test_result(void)
 	
 	return ret;
 }
-
+static int test_ret=-1;
 
 /**
  * 测试wifi
@@ -885,16 +858,16 @@ void eng_wifi_start(void)
 
 
     //eng_wifi_scan_start();
-  int ret=  test_wifi_start();
-  if(ret>=1)
+  int start_status=  test_wifi_start();
+  if(start_status>=1)
   {
 
-      char * ssid = "chendong";
-      char * psk  = "dongchen";
+      char * ssid = "sz_zib";
+      char * psk  = "zbkj2019";
       //the netid is for wifi_Connect_Network
       int netid = wifiAddNetwork(ssid, psk);
       DBGMSG("wifiAddNetwork netid : %d ", netid);
-      wifi_Connect_Network(netid);
+      test_ret=wifi_Connect_Network(netid);
   }
 
     DBGMSG("==== eng_bt_wifi_end ====");
@@ -915,7 +888,8 @@ int wifi_test()
     } else{
         DBGMSG("wifi   init thread failed");
     }
-    return 0;
+    pthread_join(wifi_init_thread,NULL);
+    return test_ret;
 }
 
 
